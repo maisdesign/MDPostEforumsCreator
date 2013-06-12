@@ -86,17 +86,32 @@ function md_postforum_creator_menu_page() {
           'post_author' => $user->ID, 
           'post_category' => array($post_category),
           'post_content' => '', 
-          'post_title' => $post_title,
+          'post_title' => wp_strip_all_tags($post_title),
           'post_status' => 'draft'
         );
-
     $post_id = wp_insert_post($new_post);
+	if (is_plugin_active('bbpress/bbpress.php')) {
+	$forum_id = bbp_insert_forum( array(
+				/*'post_parent'  => bbp_get_group_forums_root_id(),*/
+				'post_title'   => $post_title,
+				/*'post_content' => $group->description,*/
+				'post_status'  => 'draft'
+			) );
+	/*$default_forum = array(	
+		$_POST['post_title']     => array($post_category),
+	);
+	
+ 
+	$forum = bbp_insert_forum( $default_forum );*/
+	};
 };          
 echo '
 <form action="'.admin_url('admin.php?page=md-postforum-creator-menu-page-slug').'" method="post">
     <input type="text" name="post_title" size="45" id="input-title"/>
     <input type="hidden" name="new_post" value="1"/>';
+	if (is_plugin_active('bbpress/bbpress.php')) { echo 'BBPress attivo ';};
 	wp_dropdown_categories('orderby=name&hide_empty=0&exclude=1&hierarchical=1');
+	
     echo '<input class="subput round" type="submit" name="submit" value="Post"/>
 </form>';
 };?>
