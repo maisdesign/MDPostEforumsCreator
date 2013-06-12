@@ -109,7 +109,7 @@ echo '
 <form action="'.admin_url('admin.php?page=md-postforum-creator-menu-page-slug').'" method="post">
     <input type="text" name="post_title" size="45" id="input-title"/>
     <input type="hidden" name="new_post" value="1"/>';
-	if (is_plugin_active('bbpress/bbpress.php')) { echo 'BBPress attivo ';};
+
 	wp_dropdown_categories('orderby=name&hide_empty=0&exclude=1&hierarchical=1');
 	
     echo '<input class="subput round" type="submit" name="submit" value="Post"/>
