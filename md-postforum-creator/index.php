@@ -68,56 +68,7 @@ function register_md_postforum_creator_menu() {
                   'md-postforum-creator-menu-page-slug', // $menu_slug
                   'md_postforum_creator_menu_page', // $function
                   plugins_url( 'md-postforum-creator/images/mdpostforum.png' ), /* $icon_url*/
-                  3 ); // $position
-};
-/* Opzione 1 Brutalmente dal DB 
-global $md_postforum_creator_versione;
-$md_postforum_creator_versione = "1.0";
-
-function jal_install() {
-   global $wpdb;
-   global $md_postforum_creator_versione;
-
-   $table_name = $wpdb->prefix . "wp_posts";
-      
-   $sql = "CREATE TABLE $table_name (
-  id mediumint(9) NOT NULL AUTO_INCREMENT,
-  time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  name tinytext NOT NULL,
-  text text NOT NULL,
-  url VARCHAR(55) DEFAULT '' NOT NULL,
-  UNIQUE KEY id (id)
-    );";
-
-   require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-   dbDelta( $sql );
- 
-   add_option( "md_postforum_creator_versione", $md_postforum_creator_versione );
-}
-
-function jal_install_data() {
-   global $wpdb;
-   $welcome_name = "Mr. WordPress";
-   $welcome_text = "Congratulations, you just completed the installation!";
-
-   $rows_affected = $wpdb->insert( $table_name, array( 'time' => current_time('mysql'), 'name' => $welcome_name, 'text' => $welcome_text ) );
-}
-*/
- /*Fine opzion1 Brutale */
-
-
-   /* Opzione 2 Usando insert_post (forse) */
-function md_post_creator_inserimento_post() {
-$new_post = array(
-'post_title' => $_POST['name'] ,
-'post_content' => 'Asganaway',
-'post_status' => 'draft',
-'post_date' => date('Y-m-d H:i:s'),
-'post_author' => 1,
-'post_type' => 'post',
-'post_category' => array(0)
-);
-$post_id = wp_insert_post($new_post);
+                  3 ); /* $position*/
 };
 
 function md_postforum_creator_menu_page() {
@@ -125,20 +76,27 @@ function md_postforum_creator_menu_page() {
    if (!current_user_can('manage_options')) {
       wp_die( 'Sorry, you do not have permission to access this page.');
    };
-	if (!empty($_POST)) {
-echo $categoria;
-     md_post_creator_inserimento_post();
-   	}
-   _e('<h3>Generates Posts and Forums</h3>','md_postforum_creator');
-   echo '<h3>My Custom Menu Page</h3>';
-   echo '<div class="mdpostform container">
-			<form action="'.admin_url('admin.php?page=md-postforum-creator-menu-page-slug').'" method="post">
-			<div class="descmdpost"><p>';
-		_e('Nome Clan','md_postforum_creator');
-$categoria= wp_dropdown_categories('show_count=1&hierarchical=1');
-	echo '</p></div>
-			<div class="inputpost"><input name="name" type="text" id="name" value="'.$_POST['name'].'"></div>
-			<div id="clickmdpost"><input id="inviapost" name="button" type="submit" value="Invia"></div>
-		</form>
-	</div>';
+  if(isset($_POST['new_post']) == '1') {
+    $post_title = $_POST['post_title'];
+    $post_category = $_POST['cat'];
+    $post_content = $_POST['post_content'];
+
+    $new_post = array(
+          'ID' => '',
+          'post_author' => $user->ID, 
+          'post_category' => array($post_category),
+          'post_content' => '', 
+          'post_title' => $post_title,
+          'post_status' => 'draft'
+        );
+
+    $post_id = wp_insert_post($new_post);
+};          
+echo '
+<form action="'.admin_url('admin.php?page=md-postforum-creator-menu-page-slug').'" method="post">
+    <input type="text" name="post_title" size="45" id="input-title"/>
+    <input type="hidden" name="new_post" value="1"/>';
+	wp_dropdown_categories('orderby=name&hide_empty=0&exclude=1&hierarchical=1');
+    echo '<input class="subput round" type="submit" name="submit" value="Post"/>
+</form>';
 };?>
