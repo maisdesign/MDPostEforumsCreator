@@ -105,11 +105,7 @@ function jal_install_data() {
 */
  /*Fine opzion1 Brutale */
 
-function md_postforum_creator_menu_page() {
-   /* Does the user have the right permissions?*/
-   if (!current_user_can('manage_options')) {
-      wp_die( 'Sorry, you do not have permission to access this page.');
-   };
+
    /* Opzione 2 Usando insert_post (forse) */
 function md_post_creator_inserimento_post() {
 $new_post = array(
@@ -123,34 +119,26 @@ $new_post = array(
 );
 $post_id = wp_insert_post($new_post);
 };
-   echo "<script>
-			function caricapost(){
-			jQuery(document).ready(function($) {
-				$('#clickmdpost').submit(function(e){
-				$('#wait-gif').show();
-				$('#btnAddLocation').attr('disabled', true);
-				data = {
-				action: 'md_post_creator_inserimento_post',
-				form: $(this).serialize()
-				};
-				$.post( ajaxurl, data, function(response){
-					alert(response);
-					$('#wait-gif').hide();
-					$('#btnAddLocation').attr('disabled', false);
-					location.reload();
-				});
-			return false;
-			});});};
-	</script>";
+
+function md_postforum_creator_menu_page() {
+   /* Does the user have the right permissions?*/
+   if (!current_user_can('manage_options')) {
+      wp_die( 'Sorry, you do not have permission to access this page.');
+   };
+	if (!empty($_POST)) {
+echo $categoria;
+     md_post_creator_inserimento_post();
+   	}
    _e('<h3>Generates Posts and Forums</h3>','md_postforum_creator');
    echo '<h3>My Custom Menu Page</h3>';
    echo '<div class="mdpostform container">
-			<form method="post" onclick="caricapost()">
+			<form action="'.admin_url('admin.php?page=md-postforum-creator-menu-page-slug').'" method="post">
 			<div class="descmdpost"><p>';
 		_e('Nome Clan','md_postforum_creator');
+$categoria= wp_dropdown_categories('show_count=1&hierarchical=1');
 	echo '</p></div>
-			<div class="imputpost"><input name="name" type="text" id="name" value="'.$_POST['name'].'"></div>
-			<div id="clickmdpost"><input name="button" type="submit" value="Invia"></div>
+			<div class="inputpost"><input name="name" type="text" id="name" value="'.$_POST['name'].'"></div>
+			<div id="clickmdpost"><input id="inviapost" name="button" type="submit" value="Invia"></div>
 		</form>
 	</div>';
 };?>

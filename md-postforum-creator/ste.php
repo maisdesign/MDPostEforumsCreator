@@ -10,4 +10,5 @@ $new_post = array(
 'post_category' => array(0)
 );
 $post_id = wp_insert_post($new_post);
-};?>
+};
+echo 'Sono il file ste.php';?>
